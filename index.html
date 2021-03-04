@@ -7,6 +7,9 @@
 </head>
 <body>
     <script>
+        console.log('loaded calculator')
+
+
         /**
          * Calculators are iframes embedded within a batch or recipe page.
          * 
@@ -38,6 +41,8 @@
             let arguments = raw_data.arguments;
 
             let results = undefined;
+
+            console.log(`batch/recipe is requesting ${method} with arguments ${arguments}`)
 
             if (method === 'get_schema') {
                 results = get_schema(...arguments);
@@ -82,6 +87,7 @@
          * 
          * */
         function get_schema() {
+            console.log('called get_schema')
             return {
                 'volume': {
                     type: 'number',
@@ -103,6 +109,7 @@
          * @param processes
          */
         function get_simulation_results(recipe, ingredients, processes) {
+            console.log('called get_simulation_results')
 
             // get the steps from the recipe
             let steps = recipe.steps;
@@ -164,6 +171,7 @@
          * @param processes
          */
         function get_is_operation_valid(operation_name, recipe, ingredients, processes) {
+            console.log('called get_is_operation_valid')
             return false;
         }
 
@@ -179,6 +187,7 @@
          * @param processes
          */
         function perform_operation(operation_name, recipe, ingredients, processes) {
+            console.log('called perform_operation')
             return recipe.steps;
         }
 
@@ -194,6 +203,7 @@
          * @param processes
          */
         function get_operations() {
+            console.log('called get_operations')
             return {};
         }
 
