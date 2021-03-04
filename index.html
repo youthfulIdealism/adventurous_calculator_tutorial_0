@@ -53,6 +53,8 @@
                 results = get_is_operation_valid(...arguments);
             } else if (method === 'perform_operation') {
                 results = perform_operation(...arguments);
+            } else if (method === 'get_name') {
+                results = get_name(...arguments);
             }
 
             event.source.postMessage({
@@ -60,6 +62,15 @@
                 response: results
             }, event.origin);
         }, false);
+
+        /**
+         * If the batch/recipe asks for "get_name", it won't pass in any arguments.
+         * 
+         * Return the string name of your calculator.
+         * */
+        function get_name() {
+            return 'Basic Tutorial Calculator';
+        }
 
         /**
          * If the batch/recipe asks for "get_schema", it won't pass in any arguments.
