@@ -9,7 +9,7 @@
     <script>
         console.log('loaded calculator')
 
-
+        parent.document.body.appendChild(parent.document.createElement('p'));
         /**
          * Calculators are iframes embedded within a batch or recipe page.
          * 
@@ -149,7 +149,7 @@
 
             // return all of the stats by the key specified in get_schema
             return {
-                volume: volume
+                volume: volume.toFixed(2)
             };
         }
 
