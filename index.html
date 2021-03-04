@@ -116,12 +116,14 @@
 
             // we're calculating volume. Filter out the steps that aren't additions,
             // then flatten the array.
-            let additions = recipe.steps.filter(step => step.type === 'addition').flat();
+            let additions = steps.filter(step => step.type === 'addition').flat();
 
             // convert the addition ingredient from a UUID to an actual ingredient
             for (let addition of additions) {
                 addition.ingredient = ingredients[addition.ingredient];
             }
+
+            console.log(additions);
 
             let volume = 0;
             // filter down to only the ingredients that are measured by volume.
