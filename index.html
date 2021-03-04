@@ -124,11 +124,13 @@
                 addition.ingredient = ingredients[addition.ingredient];
             }
 
-            console.log(additions);
+            
 
             let volume = 0;
             // filter down to only the ingredients that are measured by volume.
             additions = additions.filter(addition => addition.ingredient.measurement === 'volume');
+
+            console.log(additions);
 
             // m3, litre (l, L, lt, liter), cc, cuin, cuft, cuyd, teaspoon, tablespoon
             // minim (min), fluiddram (fldr), fluidounce (floz), gill (gi), cup (cp), pint (pt), quart (qt), gallon (gal), beerbarrel (bbl), oilbarrel (obl), hogshead, drop (gtt)
@@ -153,6 +155,8 @@
 
             // add up the volume of the additions
             for (let addition of additions) {
+                console.log(addition.amount)
+                console.log(unit_translation[addition.unit])
                 volume += math.unit(addition.amount, unit_translation[addition.unit]).toNumber('gallon');
             }
 
