@@ -116,7 +116,8 @@
 
             // we're calculating volume. Filter out the steps that aren't additions,
             // then flatten the array.
-            let additions = steps.filter(step => step.type === 'addition').flat();
+            let addition_steps = steps.filter(step => step.type === 'addition');
+            let additions = addition_steps.map(step => step.additions).flat();
 
             // convert the addition ingredient from a UUID to an actual ingredient
             for (let addition of additions) {
