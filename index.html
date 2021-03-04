@@ -2,7 +2,8 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <script src="https://unpkg.com/mathjs@9.2.0/"></script>
+    <!-- Mathjs used for unit conversion. -->
+    <script src="https://unpkg.com/mathjs@9.2.0/lib/browser/math.js"></script>
 </head>
 <body>
     <script>
@@ -116,11 +117,36 @@
             }
 
             let volume = 0;
-            let unit_translation = {
+            // filter down to only the ingredients that are measured by volume.
+            additions = additions.filter(addition => addition.ingredient.measurement === 'volume');
 
+            // m3, litre (l, L, lt, liter), cc, cuin, cuft, cuyd, teaspoon, tablespoon
+            // minim (min), fluiddram (fldr), fluidounce (floz), gill (gi), cup (cp), pint (pt), quart (qt), gallon (gal), beerbarrel (bbl), oilbarrel (obl), hogshead, drop (gtt)
+
+            /*
+             *'gal': 'gallons',
+    'qt': 'quarts',
+    'pnt': 'pints',
+    'l': 'liters',
+    'ml': 'milliliters',
+    'fl-oz': 'fluid ounces',
+             * */
+            // dictionary to translate from the volume units used by Adventurous Brewer to the volume units used by mathjs
+            let unit_translation = {
+                'gal': 'gallon',
+                'qt': 'quart',
+                'pnt': 'pint',
+                'l': 'litre',
+                'ml': 'millilitre',
+                'fl-oz': 'fluidounce'
+            };
+
+            // add up the volume of the additions
+            for (let addition of additions) {
+                volume += math.unit(addition.amount, unit_translation[addition.unit]).toNumber('gallon');
             }
 
-
+            // return all of the stats by the key specified in get_schema
             return {
                 volume: volume
             };
