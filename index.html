@@ -2,11 +2,186 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <script src="https://unpkg.com/mathjs@9.2.0/"></script>
 </head>
 <body>
-<script>
+    <script>
+        /**
+         * Calculators are iframes embedded within a batch or recipe page.
+         * 
+         * Calculators communicate with the batch or recipe using event listeners
+         * and messaging.
+         * 
+         * By listening to the "message" event, we listen to all messages the
+         * batch or recipe page sends to the calculator.
+         * 
+         * Messages have the following format: 
+         * {
+         *      call_id: STRING, // the id of the request
+         *      method: STRING, // the id of the operation the batch/recipe wants the calculator to perform
+         *      arguments: [ANY] // any parameters for the operation
+         * }
+         * 
+         * To reply to a message, you call event.source.postMessage with the following format:
+         * {
+         *      call_id: STRING, // the ID of the request passed to you in the message (see above)
+         *      response: ANY, // the response. Format depends on the operation.
+         * }
+         * 
+         * 
+         * */
+        window.addEventListener("message", (event) => {
+            let raw_data = event.data;
+            let call_id = raw_data.call_id;
+            let method = raw_data.method;
+            let arguments = raw_data.arguments;
+
+            let results = undefined;
+
+            if (method === 'get_schema') {
+                results = get_schema(...arguments);
+            } else if (method === 'get_simulation_results') {
+                results = get_simulation_results(...arguments);
+            } else if (method === 'get_operations') {
+                results = get_operations(...arguments);
+            } else if (method === 'get_is_operation_valid') {
+                results = get_is_operation_valid(...arguments);
+            } else if (method === 'perform_operation') {
+                results = perform_operation(...arguments);
+            }
+
+            event.source.postMessage({
+                call_id: call_id,
+                response: results
+            }, event.origin);
+        }, false);
+
+        /**
+         * If the batch/recipe asks for "get_schema", it won't pass in any arguments.
+         * 
+         * The batch/recipe expects you to return an object representing the fields your calculator
+         * will calculate. The response should take the following format:
+         * {
+         *      field_1_id: {
+         *          type: STRING, // one of 'number', 'string', 'date',
+         *          name: STRING, // the display name of the field in the UI
+         *      },
+         *      field_2_id: {
+         *          type: STRING, // one of 'number', 'string', 'date',
+         *          name: STRING, // the display name of the field in the UI
+         *      }, 
+         *      field_n_id: {
+         *          type: STRING, // one of 'number', 'string', 'date',
+         *          name: STRING, // the display name of the field in the UI
+         *      }
+         * }
+         * 
+         * 
+         * For this example, the calculator will only calculate the volume of the batch.
+         * 
+         * */
+        function get_schema() {
+            return {
+                'volume': {
+                    type: 'number',
+                    name: 'Volume (Gallons)',
+                }
+            };
+        }
 
 
-</script>
+        /**
+         * 
+         * When the recipe calls get_simulation_results, it's requesting the data output by your calculator
+         * in return. It will pass in the recipe, the set of ingredients, and the set of processes.
+         * 
+         * //TODO: add documentation for the format of recipe, ingredients, processes.
+         * 
+         * @param recipe
+         * @param ingredients
+         * @param processes
+         */
+        export function get_simulation_results(recipe, ingredients, processes) {
+
+            // get the steps from the recipe
+            let steps = recipe.steps;
+
+            // we're calculating volume. Filter out the steps that aren't additions,
+            // then flatten the array.
+            let additions = recipe.steps.filter(step => step.type === 'addition').flat();
+
+            // convert the addition ingredient from a UUID to an actual ingredient
+            for (let addition of additions) {
+                addition.ingredient = ingredients[addition.ingredient];
+            }
+
+            let volume = 0;
+            let unit_translation = {
+
+            }
+
+
+            return {
+                volume: volume
+            };
+        }
+
+        /**
+         * Calculators can provide tools to modify the recipe.
+         * 
+         * We'll cover how to do this at a later time--for the moment, just include this stub
+         * in your code.
+         * 
+         * @param operation_name
+         * @param recipe
+         * @param ingredients
+         * @param processes
+         */
+        function get_is_operation_valid(operation_name, recipe, ingredients, processes) {
+            return false;
+        }
+
+        /**
+         * Calculators can provide tools to modify the recipe.
+         *
+         * We'll cover how to do this at a later time--for the moment, just include this stub
+         * in your code.
+         *
+         * @param operation_name
+         * @param recipe
+         * @param ingredients
+         * @param processes
+         */
+        function perform_operation(operation_name, recipe, ingredients, processes) {
+            return recipe.steps;
+        }
+
+        /**
+         * Calculators can provide tools to modify the recipe.
+         *
+         * We'll cover how to do this at a later time--for the moment, just include this stub
+         * in your code.
+         *
+         * @param operation_name
+         * @param recipe
+         * @param ingredients
+         * @param processes
+         */
+        export function get_operations() {
+            return {};
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
 </body>
 </html>
